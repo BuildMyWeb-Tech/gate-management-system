@@ -1,54 +1,51 @@
+// Adapted from OTT middleware/upload.ts
+// Removed: S3 upload functions
+// Added: local disk storage with date-based subfolder
 import multer from "multer";
-import { Request, Response, NextFunction } from "express";
-import { uploadToS3 } from "../config/s3.js";
+import path from "path";
+import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { Request } from "express";
 
-const storage = multer.memoryStorage();
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads";
 
-export const upload = multer({
-    storage,
-    limits: { fileSize: 500 * 1024 * 1024 }, // 500MB for videos
-    fileFilter: (_req, file, cb) => {
-        if (file.fieldname === "poster") {
-            cb(null, file.mimetype.startsWith("image/"));
-        } else if (file.fieldname === "video") {
-            cb(null, file.mimetype.startsWith("video/"));
-        } else {
-            cb(null, true);
-        }
-    },
+// Ensure upload directory exists
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    // Organise by date: uploads/2026-06-26/
+    const dateFolder = new Date().toISOString().split("T")[0];
+    const fullPath = path.join(UPLOAD_DIR, dateFolder);
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, { recursive: true });
+    }
+    cb(null, fullPath);
+  },
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${uuidv4()}${ext}`);
+  },
 });
 
-// Middleware: upload poster to S3 public, attach posterUrl to req.body
-export const uploadPoster = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.file && req.files && (req.files as any).poster) {
-        req.file = (req.files as any).poster[0];
-    }
-    if (!req.file) return next();
-    try {
-        const ext = req.file.originalname.split(".").pop();
-        const key = `posters/${uuidv4()}.${ext}`;
-        const url = await uploadToS3(req.file.buffer, key, req.file.mimetype, true);
-        req.body.poster = url;
-        next();
-    } catch (err: any) {
-        res.status(500).json({ success: false, message: "Poster upload failed: " + err.message });
-    }
-};
+const MAX_MB = Number(process.env.MAX_FILE_SIZE_MB || 5);
 
-// Middleware: upload video to S3 private, attach videoKey to req.body
-export const uploadVideo = async (req: Request, res: Response, next: NextFunction) => {
-    const videoFile = req.files && (req.files as any).video ? (req.files as any).video[0] : null;
-    if (!videoFile) return next();
-    try {
-        const ext = videoFile.originalname.split(".").pop();
-        const key = `videos/${uuidv4()}.${ext}`;
-        await uploadToS3(videoFile.buffer, key, videoFile.mimetype, false);
-        req.body.videoKey = key; // private key, not public URL
-        next();
-    } catch (err: any) {
-        res.status(500).json({ success: false, message: "Video upload failed: " + err.message });
+export const upload = multer({
+  storage,
+  limits: { fileSize: MAX_MB * 1024 * 1024 },
+  fileFilter: (_req: Request, file, cb) => {
+    const allowed = /jpeg|jpg|png|webp/;
+    const isAllowed =
+      allowed.test(path.extname(file.originalname).toLowerCase()) &&
+      allowed.test(file.mimetype);
+    if (isAllowed) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only JPEG, PNG, and WebP images are allowed"));
     }
-};
+  },
+});
 
 export default upload;

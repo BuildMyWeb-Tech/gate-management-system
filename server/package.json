@@ -1,45 +1,35 @@
 {
-    "name": "server",
-    "version": "1.0.0",
-    "description": "server",
-    "main": "server.js",
-    "scripts": {
-        "start": "tsx server.ts",
-        "server": "nodemon --exec tsx server.ts",
-        "build": "tsc",
-        "reset:test-data": "tsx scripts/resetTestData.ts"
-    },
-    "author": "",
-    "license": "ISC",
-    "type": "module",
-    "dependencies": {
-        "@aws-sdk/client-s3": "^3.1057.0",
-        "@aws-sdk/cloudfront-signer": "^3.1056.0",
-        "@aws-sdk/s3-request-presigner": "^3.1057.0",
-        "@clerk/express": "^1.7.69",
-        "bcryptjs": "^3.0.3",
-        "cloudinary": "^2.9.0",
-        "cors": "^2.8.6",
-        "dotenv": "^17.2.4",
-        "express": "^5.2.1",
-        "express-rate-limit": "^8.5.2",
-        "jsonwebtoken": "^9.0.3",
-        "mongoose": "^9.6.2",
-        "multer": "^2.0.2",
-        "razorpay": "^2.9.6",
-        "stripe": "^20.3.1",
-        "uuid": "^14.0.0"
-    },
-    "devDependencies": {
-        "@types/bcryptjs": "^2.4.6",
-        "@types/cors": "^2.8.19",
-        "@types/express": "^5.0.6",
-        "@types/jsonwebtoken": "^9.0.10",
-        "@types/multer": "^2.0.0",
-        "@types/node": "^25.2.3",
-        "nodemon": "^3.1.11",
-        "ts-node": "^10.9.2",
-        "tsx": "^4.21.0",
-        "typescript": "^5.9.3"
-    }
+  "name": "gms-server",
+  "version": "1.0.0",
+  "description": "Gate Management System API",
+  "main": "server.js",
+  "scripts": {
+    "start": "tsx server.ts",
+    "dev": "nodemon --exec tsx server.ts",
+    "build": "tsc"
+  },
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+    "oracledb": "^6.7.0",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^25.2.3",
+    "@types/oracledb": "^6.5.3",
+    "nodemon": "^3.1.11",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
 }
