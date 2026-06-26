@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "A2S Cinemas",
+    "slug": "ott-platform",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "a2scinemas",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.a2scinemas.app"
+    },
+    "android": {
+      "package": "com.a2scinemas.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "a2scinemas"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "adaptiveIcon": {
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundColor": "#0A0A0F",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+  "expo-splash-screen",
+  {
+    "image": "./assets/images/splash-icon.png",
+    "imageWidth": 280,
+    "resizeMode": "contain",
+    "backgroundColor": "#ffffff",
+    "dark": {
+      "backgroundColor": "#000000"
+    }
+  }
+],
+      "expo-secure-store",
+      "expo-video",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ce4fc097-be0b-4c11-b7d0-5853c667cb2c"
+      }
+    },
+    "owner": "ott-platform"
+  }
+}
