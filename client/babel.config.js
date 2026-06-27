@@ -1,4 +1,3 @@
-// Kept from OTT — no changes needed
 module.exports = function (api) {
   api.cache(true);
   return {

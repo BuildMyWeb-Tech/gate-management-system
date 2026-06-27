@@ -1,9 +1,15 @@
-// Rewritten from OTT AuthContext.tsx
-// Key changes: SecureStore instead of AsyncStorage, GMS login fields
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginApi, getMeApi } from "@/api/auth";
+// MOCK MODE — Oracle SP will be wired in later
+// Login accepts any company code + username + password + gate
+// and returns a mock user so all screens are accessible
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { saveToken, saveUser, clearAuth, getToken, getUser } from "@/utils/storage";
-import type { User, LoginResponse } from "@/types";
+import type { User } from "@/types";
 
 interface AuthContextType {
   user: User | null;
@@ -21,6 +27,25 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// ── MOCK DATA ─────────────────────────────────────────────────────────────────
+const MOCK_TOKEN = "mock_jwt_token_gms_2026";
+
+const buildMockUser = (
+  companyCode: string,
+  username: string,
+  gateId: number
+): User => ({
+  id: 1,
+  username,
+  name: username.charAt(0).toUpperCase() + username.slice(1),
+  role: "admin",
+  companyCode: companyCode.toUpperCase(),
+  gateId,
+  gateName: `Gate ${gateId}`,
+  permissions: ["VISITOR_VIEW", "VISITOR_ADD", "VEHICLE_VIEW", "VEHICLE_ADD"],
+});
+// ─────────────────────────────────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -52,22 +77,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     gateId: number
   ) => {
-    try {
-      const result = await loginApi(companyCode, username, password, gateId);
-      if (result.success && result.data) {
-        await saveToken(result.data.token);
-        await saveUser(result.data.user);
-        setToken(result.data.token);
-        setUser(result.data.user);
-        return { success: true };
-      }
-      return { success: false, message: result.message };
-    } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || "Login failed",
-      };
+    // Basic validation only — no Oracle call yet
+    if (!companyCode.trim() || !username.trim() || !password.trim()) {
+      return { success: false, message: "All fields are required" };
     }
+    if (!gateId) {
+      return { success: false, message: "Please select a gate" };
+    }
+
+    const mockUser = buildMockUser(companyCode, username, gateId);
+    await saveToken(MOCK_TOKEN);
+    await saveUser(mockUser);
+    setToken(MOCK_TOKEN);
+    setUser(mockUser);
+    return { success: true };
   };
 
   const logout = async () => {
@@ -77,15 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshUser = async () => {
-    try {
-      const result = await getMeApi();
-      if (result.success && result.data) {
-        setUser(result.data);
-        await saveUser(result.data);
-      }
-    } catch (error) {
-      console.error("Failed to refresh user:", error);
-    }
+    // No-op in mock mode
   };
 
   return (

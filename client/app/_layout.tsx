@@ -1,6 +1,4 @@
-// Adapted from OTT _layout.tsx
-// Removed: LicenseProvider, ThemeToggle, OTT-specific screens
-// Added: QueryClient for TanStack Query
+import "../global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "@/context/AuthContext";
@@ -15,7 +13,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 1000 * 60 * 2, // 2 minutes
+      staleTime: 1000 * 60 * 2,
     },
   },
 });
