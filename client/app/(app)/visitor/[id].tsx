@@ -1,21 +1,95 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import Toast from "react-native-toast-message";
+
+const MOCK_DETAIL = {
+  id: 1, name: "Arjun Sharma", mobile: "9876543210",
+  visitorType: "Official", company: "ABC Corp",
+  toMeet: "Rajesh Kumar", remarks: "Project discussion",
+  vehicleNo: "TN01AB1234", passNo: "P001",
+  inTime: "09:15 AM", outTime: "11:30 AM", date: "2026-06-26",
+};
 
 export default function VisitorDetailScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
+  const [loading, setLoading] = useState(false);
+  const visitor = { ...MOCK_DETAIL, id: Number(id) };
+
+  const handleOut = async () => {
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 500));
+    setLoading(false);
+    Toast.show({ type: "success", text1: "Visitor marked as out" });
+    router.back();
+  };
+
+  const Row = ({ icon, label, value }: { icon: string; label: string; value: string }) => (
+    <View className="flex-row items-start py-3 border-b border-border">
+      <View className="w-8 items-center mt-0.5">
+        <Ionicons name={icon as any} size={16} color="#64748B" />
+      </View>
+      <View className="flex-1">
+        <Text className="text-text-muted text-xs">{label}</Text>
+        <Text className="text-text-primary text-sm font-medium mt-0.5">{value || "—"}</Text>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-5 py-4 border-b border-border">
         <TouchableOpacity onPress={() => router.back()} className="mr-3">
           <Ionicons name="arrow-back" size={22} color="#F1F5F9" />
         </TouchableOpacity>
-        <Text className="text-text-primary text-lg font-bold">Visitor Detail</Text>
+        <Text className="text-text-primary text-lg font-bold flex-1">Visitor Detail</Text>
+        {!visitor.outTime && (
+          <TouchableOpacity onPress={handleOut} className="bg-success/20 border border-success/30 px-4 py-2 rounded-xl flex-row items-center gap-1">
+            {loading ? <ActivityIndicator size="small" color="#10B981" /> : (
+              <>
+                <Ionicons name="log-out-outline" size={16} color="#10B981" />
+                <Text className="text-success text-sm font-semibold">Out</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        )}
       </View>
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-text-secondary">Phase 5</Text>
-      </View>
+
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+        {/* Avatar */}
+        <View className="items-center py-6">
+          <View className="w-20 h-20 rounded-full bg-primary/20 items-center justify-center mb-3">
+            <Text className="text-primary text-3xl font-bold">{visitor.name.charAt(0)}</Text>
+          </View>
+          <Text className="text-text-primary text-xl font-bold">{visitor.name}</Text>
+          <View className="flex-row items-center gap-2 mt-2">
+            <View className="bg-blue-500/20 px-3 py-1 rounded-full">
+              <Text className="text-blue-400 text-xs font-semibold">{visitor.visitorType}</Text>
+            </View>
+            <View className={`px-3 py-1 rounded-full ${visitor.outTime ? "bg-success/20" : "bg-amber-500/20"}`}>
+              <Text className={`text-xs font-semibold ${visitor.outTime ? "text-success" : "text-amber-400"}`}>
+                {visitor.outTime ? "Exited" : "Inside"}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Details card */}
+        <View className="bg-surface border border-border rounded-2xl px-4">
+          <Row icon="call-outline" label="Mobile" value={visitor.mobile} />
+          <Row icon="business-outline" label="Company" value={visitor.company} />
+          <Row icon="person-outline" label="To Meet" value={visitor.toMeet} />
+          <Row icon="chatbubble-outline" label="Remarks" value={visitor.remarks} />
+          <Row icon="car-outline" label="Vehicle No" value={visitor.vehicleNo} />
+          <Row icon="card-outline" label="Pass No" value={visitor.passNo} />
+          <Row icon="log-in-outline" label="In Time" value={visitor.inTime} />
+          <Row icon="log-out-outline" label="Out Time" value={visitor.outTime || "Not yet"} />
+          <Row icon="calendar-outline" label="Date" value={visitor.date} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
