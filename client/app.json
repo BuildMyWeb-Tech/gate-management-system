@@ -13,17 +13,12 @@
     },
     "android": {
       "package": "com.msn.gatemanagement",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0F172A"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "bundler": "metro"
+      "edgeToEdgeEnabled": true
     },
     "plugins": [
       "expo-router",
@@ -36,15 +31,16 @@
           "backgroundColor": "#0F172A"
         }
       ],
-      "expo-secure-store",
-      "expo-camera",
-      "expo-image-picker"
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "eas": {
+         "projectId": "196b7fa3-ccc3-44b6-8c70-f0631ed1fec9"
+      }
     }
   }
 }

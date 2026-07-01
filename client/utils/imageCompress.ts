@@ -1,10 +1,5 @@
-import * as ImageManipulator from "expo-image-manipulator";
-
+// expo-image-manipulator removed until Phase 10 (camera implementation)
 export const compressImage = async (uri: string): Promise<string> => {
-  const result = await ImageManipulator.manipulateAsync(
-    uri,
-    [{ resize: { width: 800 } }],
-    { compress: 0.75, format: ImageManipulator.SaveFormat.JPEG }
-  );
-  return result.uri;
+  // Will be implemented in Phase 10 when camera is wired
+  return uri;
 };
