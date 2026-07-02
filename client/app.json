@@ -13,7 +13,7 @@
     },
     "android": {
       "package": "com.msn.gatemanagement",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0F172A"
@@ -39,7 +39,7 @@
     "extra": {
       "router": {},
       "eas": {
-         "projectId": "196b7fa3-ccc3-44b6-8c70-f0631ed1fec9"
+        "projectId": "196b7fa3-ccc3-44b6-8c70-f0631ed1fec9"
       }
     }
   }
